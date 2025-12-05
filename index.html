@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Champ Virtuel Intelligent - Simulation 3D</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header>
+    <h1>🌾 Champ Virtuel Intelligent (CVI)</h1>
+  </header>
+
+  <main id="main-content">
+    <!-- Texte explicatif -->
+    <section id="intro">
+      <h2>Simulation interactive du <span>Champ Virtuel Intelligent</span></h2>
+      <p>
+        Cette démonstration technologique prouve la faisabilité du projet CVI.<br><br>
+        Elle illustre comment un agriculteur peut interagir avec un <b>assistant virtuel intelligent</b>
+        pour <b>semer</b>, <b>arroser</b>, <b>fertiliser</b> et <b>traiter</b> sa culture de maïs de manière
+        autonome et intuitive.<br><br>
+        🌱 Une expérience éducative et innovante au service de la souveraineté alimentaire.
+      </p>
+    </section>
+
+    <!-- Champ 3D -->
+    <div id="canvas-area">
+      <div id="container"></div>
+      <div id="dragHint">🖱️ Cliquez et glissez pour tourner le champ</div>
+    </div>
+  </main>
+
+  <!-- Barre d'outils -->
+  <div id="toolbar">
+    <div class="tool" id="seedTool" draggable="true">🌱 Maïs</div>
+    <div class="tool" id="waterTool" draggable="true">💧 Arroser</div>
+    <div class="tool" id="fertilizerTool" draggable="true">🌿 Engrais</div>
+    <div class="tool" id="cureTool" draggable="true">🧪 Soigner</div>
+  </div>
+
+  <div id="notifications"></div>
+
+  <footer>
+    <p>
+      🚜 <b>Champ Virtuel Intelligent (CVI)</b> — Prototype immersif du simulateur agricole intelligent.
+      <br>
+      Objectif : démontrer la viabilité technologique et l’impact éducatif du projet pour une agriculture durable.
+    </p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
