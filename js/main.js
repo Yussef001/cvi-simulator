@@ -42,18 +42,64 @@ function init() {
   renderer.setSize(window.innerWidth, 0.7 * window.innerHeight);
   document.getElementById("container").appendChild(renderer.domElement);
 
+  // 💡 Lumières
   const light = new THREE.DirectionalLight(0xffffff, 1.2);
   light.position.set(15, 30, 10);
   scene.add(light);
   scene.add(new THREE.AmbientLight(0xaaaaaa));
 
-  const texture = new THREE.TextureLoader().load('https://i.ibb.co/Sd2dJvP/sandy-soil.jpg');
+  // 🌾 Sol marron terreux (couleur proche des cailloux)
   const groundGeo = new THREE.PlaneGeometry(30, 30, 32, 32);
-  const groundMat = new THREE.MeshStandardMaterial({ map: texture, roughness: 1 });
+  const groundMat = new THREE.MeshStandardMaterial({
+    color: 0x6b3e1e, // marron chaud, couleur de terre
+    roughness: 1,
+    metalness: 0.2,
+  });
   field = new THREE.Mesh(groundGeo, groundMat);
   field.rotation.x = -Math.PI / 2;
   scene.add(field);
 
+  // 🪨 Beaucoup de cailloux rouge foncé
+  const rockGeo = new THREE.SphereGeometry(0.15, 8, 8);
+  const rockMat = new THREE.MeshStandardMaterial({ color: 0xF2A90A, roughness: 0.9 });
+
+  for (let i = 0; i < 120; i++) { // beaucoup plus de cailloux
+    const rock = new THREE.Mesh(rockGeo, rockMat);
+    rock.position.set(
+      (Math.random() - 0.5) * 26,
+      0.08,
+      (Math.random() - 0.5) * 26
+    );
+    const scale = Math.random() * 0.4 + 0.2;
+    rock.scale.set(scale, scale * 0.6, scale);
+    scene.add(rock);
+  }
+
+  // 🌿 Petites touffes d’herbe clairsemées
+  const grassMat = new THREE.MeshStandardMaterial({ color: 0x2ecc71, roughness: 0.8, side: THREE.DoubleSide });
+  const grassGeo = new THREE.PlaneGeometry(0.3, 1, 1, 3);
+
+  for (let i = 0; i < 40; i++) {
+    const tuft = new THREE.Mesh(grassGeo, grassMat);
+    tuft.rotation.y = Math.random() * Math.PI;
+    tuft.position.set(
+      (Math.random() - 0.5) * 20,
+      0.05,
+      (Math.random() - 0.5) * 20
+    );
+
+    // courber légèrement l’herbe
+    const pos = tuft.geometry.attributes.position;
+    for (let v = 0; v < pos.count; v++) {
+      const y = pos.getY(v);
+      pos.setZ(v, Math.sin(y * 2) * 0.1);
+    }
+    pos.needsUpdate = true;
+
+    scene.add(tuft);
+  }
+
+  // 🎮 Contrôles rotation
   const container = document.getElementById("container");
   container.addEventListener("mousedown", e => { isDragging = true; mouseX = e.clientX; });
   container.addEventListener("mouseup", () => { isDragging = false; });
@@ -63,6 +109,24 @@ function init() {
       mouseX = e.clientX;
     }
   });
+  // 📱 Gestion du tactile (rotation au doigt)
+  container.addEventListener("touchstart", e => {
+    if (e.touches.length === 1) {
+      isDragging = true;
+      mouseX = e.touches[0].clientX;
+    }
+  });
+  container.addEventListener("touchmove", e => {
+    if (isDragging && e.touches.length === 1) {
+      const deltaX = e.touches[0].clientX - mouseX;
+      targetRotation += deltaX * 0.005;
+      mouseX = e.touches[0].clientX;
+    }
+  });
+  container.addEventListener("touchend", () => {
+    isDragging = false;
+  });
+
 
   // 🖱️ Activation du son au premier clic
   window.addEventListener("click", () => {
@@ -83,6 +147,7 @@ function init() {
 
   showMessage("💡 Glissez la graine 🌱 sur le champ pour planter du maïs !");
 }
+
 
 function handleTool(toolId) {
   if (isDiseased && toolId !== "cureTool") {
