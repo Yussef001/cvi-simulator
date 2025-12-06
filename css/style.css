@@ -353,9 +353,3 @@ html, body {
     right: 8px;
   }
 }
-
-@media (max-width: 768px) {
-  #main-content {
-    height: calc(100dvh - 100px); /* un peu plus haut */
-  }
-}
