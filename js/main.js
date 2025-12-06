@@ -40,7 +40,7 @@ function init() {
   // 📱 Ajustement automatique selon la taille d’écran
   if (window.innerWidth < 768) {
     // Sur smartphone : on monte un peu la caméra pour mieux voir le champ
-    camera.position.set(0, 10, 26);
+    camera.position.set(0, 7, 26);
   } else {
     // Sur PC : vue normale
     camera.position.set(0, 8, 22);
