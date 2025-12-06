@@ -349,7 +349,7 @@ html, body {
 
   /* Ajustement de l'indication "cliquez-glissez" */
   #dragHint {
-    top: 35%;
+    top: 20%;
     right: 8px;
   }
 }
