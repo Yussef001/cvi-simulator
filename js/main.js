@@ -1,4 +1,4 @@
-// === CVI Field Engine v8 — Sons .wav + Effet maladie réaliste + Séquencement strict ===
+// === CVI Field Engine v9 — Compatible Mobile + Sons + Séquencement strict ===
 
 let scene, camera, renderer, plant, field;
 let hasPlanted = false, hasWatered = false, hasFertilized = false, hasCured = false;
@@ -10,7 +10,7 @@ let growthInterval = null;
 let currentStep = "seed";
 const notifications = document.getElementById("notifications");
 
-// 🎵 Préchargement des sons (avec volume équilibré)
+// 🎵 Préchargement des sons
 const sounds = {
   plant: Object.assign(new Audio("sounds/plant.wav"), { volume: 0.7 }),
   water: Object.assign(new Audio("sounds/water.wav"), { volume: 0.6 }),
@@ -48,10 +48,10 @@ function init() {
   scene.add(light);
   scene.add(new THREE.AmbientLight(0xaaaaaa));
 
-  // 🌾 Sol marron terreux (couleur proche des cailloux)
+  // 🌾 Sol marron terreux + cailloux rouge foncé
   const groundGeo = new THREE.PlaneGeometry(30, 30, 32, 32);
   const groundMat = new THREE.MeshStandardMaterial({
-    color: 0x6b3e1e, // marron chaud, couleur de terre
+    color: 0x6b3e1e,
     roughness: 1,
     metalness: 0.2,
   });
@@ -59,36 +59,27 @@ function init() {
   field.rotation.x = -Math.PI / 2;
   scene.add(field);
 
-  // 🪨 Beaucoup de cailloux rouge foncé
+  // 🪨 Cailloux rouge foncé
   const rockGeo = new THREE.SphereGeometry(0.15, 8, 8);
-  const rockMat = new THREE.MeshStandardMaterial({ color: 0xF2A90A, roughness: 0.9 });
+  const rockMat = new THREE.MeshStandardMaterial({ color: 0x8b0000, roughness: 0.9 });
 
-  for (let i = 0; i < 120; i++) { // beaucoup plus de cailloux
+  for (let i = 0; i < 120; i++) {
     const rock = new THREE.Mesh(rockGeo, rockMat);
-    rock.position.set(
-      (Math.random() - 0.5) * 26,
-      0.08,
-      (Math.random() - 0.5) * 26
-    );
+    rock.position.set((Math.random() - 0.5) * 26, 0.08, (Math.random() - 0.5) * 26);
     const scale = Math.random() * 0.4 + 0.2;
     rock.scale.set(scale, scale * 0.6, scale);
     scene.add(rock);
   }
 
-  // 🌿 Petites touffes d’herbe clairsemées
+  // 🌿 Touffes d’herbe
   const grassMat = new THREE.MeshStandardMaterial({ color: 0x2ecc71, roughness: 0.8, side: THREE.DoubleSide });
   const grassGeo = new THREE.PlaneGeometry(0.3, 1, 1, 3);
 
   for (let i = 0; i < 40; i++) {
     const tuft = new THREE.Mesh(grassGeo, grassMat);
     tuft.rotation.y = Math.random() * Math.PI;
-    tuft.position.set(
-      (Math.random() - 0.5) * 20,
-      0.05,
-      (Math.random() - 0.5) * 20
-    );
+    tuft.position.set((Math.random() - 0.5) * 20, 0.05, (Math.random() - 0.5) * 20);
 
-    // courber légèrement l’herbe
     const pos = tuft.geometry.attributes.position;
     for (let v = 0; v < pos.count; v++) {
       const y = pos.getY(v);
@@ -99,7 +90,7 @@ function init() {
     scene.add(tuft);
   }
 
-  // 🎮 Contrôles rotation
+  // 🎮 Contrôles rotation (PC)
   const container = document.getElementById("container");
   container.addEventListener("mousedown", e => { isDragging = true; mouseX = e.clientX; });
   container.addEventListener("mouseup", () => { isDragging = false; });
@@ -109,7 +100,8 @@ function init() {
       mouseX = e.clientX;
     }
   });
-  // 📱 Gestion du tactile (rotation au doigt)
+
+  // 📱 Contrôles rotation tactile
   container.addEventListener("touchstart", e => {
     if (e.touches.length === 1) {
       isDragging = true;
@@ -123,17 +115,14 @@ function init() {
       mouseX = e.touches[0].clientX;
     }
   });
-  container.addEventListener("touchend", () => {
-    isDragging = false;
-  });
+  container.addEventListener("touchend", () => { isDragging = false; });
 
-
-  // 🖱️ Activation du son au premier clic
+  // 🔊 Activation du son au premier clic
   window.addEventListener("click", () => {
     Object.values(sounds).forEach(s => s.play().then(() => s.pause()).catch(()=>{}));
   }, { once: true });
 
-  // 🔧 Gestion des outils
+  // 🧰 Gestion drag & drop (PC)
   document.querySelectorAll(".tool").forEach(tool => {
     tool.addEventListener("dragstart", e => e.dataTransfer.setData("tool", tool.id));
   });
@@ -145,10 +134,36 @@ function init() {
     handleTool(toolId);
   });
 
+  // 📱 Simulation drag & drop sur mobile
+  let selectedTool = null;
+  document.querySelectorAll(".tool").forEach(tool => {
+    tool.addEventListener("click", () => {
+      if (selectedTool === tool.id) {
+        selectedTool = null;
+        tool.classList.remove("active");
+        showMessage("❎ Outil désélectionné");
+        return;
+      }
+      document.querySelectorAll(".tool").forEach(t => t.classList.remove("active"));
+      tool.classList.add("active");
+      selectedTool = tool.id;
+      showMessage(`👉 ${tool.textContent.trim()} sélectionné. Touchez le champ pour l'utiliser.`);
+    });
+  });
+
+  renderer.domElement.addEventListener("touchend", e => {
+    if (selectedTool) {
+      handleTool(selectedTool);
+      selectedTool = null;
+      document.querySelectorAll(".tool").forEach(t => t.classList.remove("active"));
+    }
+  }, { passive: true });
+
   showMessage("💡 Glissez la graine 🌱 sur le champ pour planter du maïs !");
 }
 
 
+// === Logique principale ===
 function handleTool(toolId) {
   if (isDiseased && toolId !== "cureTool") {
     showMessage("⚠️ La plante est malade ! Soignez-la avant de continuer 🧪");
@@ -205,6 +220,8 @@ function handleTool(toolId) {
   }
 }
 
+
+// === Modélisation du maïs ===
 function createRealisticCorn() {
   const group = new THREE.Group();
 
@@ -238,6 +255,8 @@ function createRealisticCorn() {
   plant = group;
 }
 
+
+// === Croissance et maladies ===
 function startGrowth() {
   if (growthInterval) clearInterval(growthInterval);
 

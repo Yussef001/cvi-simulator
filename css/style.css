@@ -160,76 +160,106 @@ footer {
   box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
 }
 
-/* === 🌍 Responsive Mobile & Tablette === */
-@media (max-width: 900px) {
-  header h1 {
-    font-size: 1.3em;
-  }
+/* === Correction du responsive mobile === */
+html, body {
+  height: 100%;
+  overflow: hidden; /* empêche tout scroll sur mobile */
+  touch-action: none; /* empêche le défilement tactile natif */
+}
 
-  #main-content {
-    flex-direction: column;
-    height: auto;
+#main-content {
+  height: calc(100dvh - 120px); /* hauteur dynamique selon l’écran */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#container, canvas {
+  width: 100%;
+  height: 100%;
+  touch-action: none; /* indispensable pour empêcher le scroll pendant le drag */
+}
+
+@media (max-width: 768px) {
+  header h1 {
+    font-size: 1.2em;
   }
 
   #intro {
-    position: relative;
     width: 90%;
-    max-width: 400px;
-    top: auto;
-    left: auto;
-    transform: none;
-    margin: 10px auto;
+    left: 50%;
+    top: 10%;
+    transform: translateX(-50%);
     font-size: 0.9em;
-    z-index: 1000;
-  }
-
-  #canvas-area {
-    width: 100%;
-    height: 50vh;
-    margin-top: 10px;
-  }
-
-  #container {
-    height: 50vh !important;
   }
 
   #dragHint {
-    position: absolute;
-    right: 50%;
-    top: auto;
-    bottom: 10px;
-    transform: translateX(50%);
-    font-size: 0.85em;
-    padding: 8px 14px;
+    font-size: 0.8em;
+    right: 5px;
   }
 
   #toolbar {
-    gap: 10px;
-  }
-
-  .tool {
-    font-size: 0.9em;
-    padding: 8px 12px;
+    flex-direction: column;
+    gap: 8px;
   }
 
   footer {
     font-size: 0.8em;
-    padding: 10px;
   }
 }
 
-@media (max-width: 500px) {
-  #intro {
-    font-size: 0.8em;
-    padding: 10px 15px;
-  }
+/* === État actif des outils (mobile & PC) === */
+.tool.active {
+  background: linear-gradient(145deg, #6ee96e, #4caf50);
+  color: white;
+  border-color: #2e7d32;
+  transform: scale(1.05);
+  box-shadow: 0 0 12px rgba(46, 125, 50, 0.6);
+}
 
-  #dragHint {
-    font-size: 0.75em;
-  }
+/* Meilleure gestion du curseur selon l’état */
+#container:active {
+  cursor: grabbing;
+}
 
+.tool:active {
+  transform: scale(1.1);
+}
+
+/* Petites améliorations de réactivité mobile */
+@media (hover: none) and (pointer: coarse) {
   .tool {
-    font-size: 0.8em;
-    padding: 7px 10px;
+    cursor: pointer;
+  }
+
+  #container {
+    cursor: default;
+  }
+}
+/* === Ajustements spécifiques pour mobile === */
+@media (max-width: 768px) {
+
+  /* 1️⃣ Masquer ou réduire le texte explicatif */
+  #intro {
+    display: none; /* on le masque complètement pour libérer l’écran */
+  }
+
+  /* 2️⃣ Remonter légèrement l’indication de rotation */
+  #dragHint {
+    top: 35%; /* au lieu de 50% */
+    font-size: 0.85em;
+    padding: 10px 14px;
+    right: 8px;
+  }
+
+  /* Ajuste aussi le champ pour qu’il reste bien centré */
+  #main-content {
+    height: calc(100dvh - 160px);
+    justify-content: center;
+    align-items: center;
+  }
+
+  #container, canvas {
+    height: 60vh; /* évite que ça dépasse le viewport */
   }
 }
