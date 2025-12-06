@@ -336,3 +336,25 @@ function animate() {
   scene.rotation.y = currentRotation;
   renderer.render(scene, camera);
 }
+
+
+// === Info popup mobile ===
+const infoBtn = document.getElementById("infoButton");
+const infoPopup = document.getElementById("mobileInfoPopup");
+
+if (infoBtn && infoPopup) {
+  let popupVisible = false;
+
+  infoBtn.addEventListener("click", () => {
+    popupVisible = !popupVisible;
+    infoPopup.style.display = popupVisible ? "block" : "none";
+  });
+
+  // Clic en dehors du popup = fermeture
+  document.addEventListener("click", (e) => {
+    if (popupVisible && !infoPopup.contains(e.target) && e.target !== infoBtn) {
+      infoPopup.style.display = "none";
+      popupVisible = false;
+    }
+  });
+}

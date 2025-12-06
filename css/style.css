@@ -263,3 +263,93 @@ html, body {
     height: 60vh; /* évite que ça dépasse le viewport */
   }
 }
+
+
+/* === Icône ℹ️ visible uniquement sur mobile === */
+#infoButton {
+  display: none;
+}
+#mobileInfoPopup {
+  display: none;
+}
+
+/* === Apparence mobile === */
+@media (max-width: 768px) {
+
+  /* Masquer le texte explicatif */
+  #intro {
+    display: none;
+  }
+
+  /* Bouton ℹ️ placé dans la zone verte */
+  #infoButton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 60px; /* dans la zone verte, juste sous l'entête */
+    left: 60px; /* légèrement décalé à droite */
+    width: 40px;
+    height: 40px;
+    background: #2b4d2b;
+    color: white;
+    font-weight: bold;
+    font-size: 1.4em;
+    border-radius: 50%;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    z-index: 2000;
+    cursor: pointer;
+    animation: pulse 2s infinite ease-in-out;
+  }
+
+  /* Popup d'information — bulle liée au i */
+  #mobileInfoPopup {
+    position: absolute;
+    top: 82px; /* juste en dessous du bouton */
+    left: 40px; /* aligné avec le bouton i */
+    width: 80%;
+    max-width: 320px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
+    padding: 15px 18px;
+    color: #1f3b1f;
+    text-align: justify;
+    z-index: 3000;
+    animation: fadeIn 0.3s ease;
+  }
+
+  #mobileInfoPopup::before {
+    content: "";
+    position: absolute;
+    top: -10px;
+    left: 20px;
+    border-width: 0 10px 10px 10px;
+    border-style: solid;
+    border-color: transparent transparent rgba(255, 255, 255, 0.95) transparent;
+  }
+
+  #mobileInfoPopup h3 {
+    text-align: center;
+    color: #184d18;
+    margin-top: 0;
+    font-size: 1.1em;
+  }
+
+  #mobileInfoPopup p {
+    margin: 0;
+    line-height: 1.5em;
+    font-size: 0.9em;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Ajustement de l'indication "cliquez-glissez" */
+  #dragHint {
+    top: 35%;
+    right: 8px;
+  }
+}
