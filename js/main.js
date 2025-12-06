@@ -36,7 +36,15 @@ function init() {
   scene.background = new THREE.Color(0xaee1a3);
 
   camera = new THREE.PerspectiveCamera(60, window.innerWidth / (0.7 * window.innerHeight), 0.1, 1000);
-  camera.position.set(0, 8, 22);
+
+  // 📱 Ajustement automatique selon la taille d’écran
+  if (window.innerWidth < 768) {
+    // Sur smartphone : on monte un peu la caméra pour mieux voir le champ
+    camera.position.set(0, 10, 26);
+  } else {
+    // Sur PC : vue normale
+    camera.position.set(0, 8, 22);
+  }
 
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(window.innerWidth, 0.7 * window.innerHeight);
@@ -279,8 +287,8 @@ function startGrowth() {
 
 function growPlant() {
   growthStage++;
-  plant.scale.y += 0.5;
-  plant.position.y += 0.3;
+  plant.scale.y += 0.35;
+  plant.position.y += 0.25;
 
   if (growthStage === 3 && !hasCured) {
     applyDiseaseEffect();

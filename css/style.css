@@ -168,7 +168,7 @@ html, body {
 }
 
 #main-content {
-  height: calc(100dvh - 120px); /* hauteur dynamique selon l’écran */
+  height: calc(100dvh - 100px); /* hauteur dynamique selon l’écran */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -250,13 +250,6 @@ html, body {
     font-size: 0.85em;
     padding: 10px 14px;
     right: 8px;
-  }
-
-  /* Ajuste aussi le champ pour qu’il reste bien centré */
-  #main-content {
-    height: calc(100dvh - 160px);
-    justify-content: center;
-    align-items: center;
   }
 
   #container, canvas {
